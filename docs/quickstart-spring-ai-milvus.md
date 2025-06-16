@@ -261,39 +261,40 @@ public class ChatService {
     private final VectorStore vectorStore;
     private final ChatClient chatClient;
     
-    public ChatService(VectorStore vectorStore, ChatClient chatClient) {
+    public ChatService(VectorStore vectorStore, ChatClient.Builder chatClientBuilder) {
         this.vectorStore = vectorStore;
-        this.chatClient = chatClient;
+        this.chatClient = chatClientBuilder.build();
     }
     
     public ChatResponse processMessage(String userMessage) {
         try {
-            // 1. 使用Spring AI进行向量检索
-            List<Document> similarDocuments = vectorStore.similaritySearch(
-                SearchRequest.query(userMessage).withTopK(3).withSimilarityThreshold(0.6)
-            );
+            // 1. 使用Spring AI进行向量检索 - 正确的API
+            SearchRequest searchRequest = SearchRequest.builder()
+                    .query(userMessage)
+                    .topK(3)
+                    .similarityThreshold(0.6)
+                    .build();
+
+            List<Document> similarDocuments = vectorStore.similaritySearch(searchRequest);
             
             // 2. 构建上下文
             String context = similarDocuments.stream()
-                .map(Document::getContent)
+                .map(Document::getText)  // 使用getText()而不是getContent()
                 .collect(Collectors.joining("\n\n"));
             
             // 3. 构建提示词
             String prompt = buildPrompt(userMessage, context);
             
-            // 4. 使用Spring AI Chat生成回答
+            // 4. 使用Spring AI ChatClient生成回答 - 正确的API
             String answer;
             if (context.trim().isEmpty()) {
                 answer = "抱歉，我没有找到相关的文档信息来回答您的问题。请先上传相关文档。";
             } else {
-                ChatResponse response = chatClient.call(
-                    new Prompt(prompt,
-                        ChatOptionsBuilder.builder()
-                            .withTemperature(0.7f)
-                            .withMaxTokens(500)
-                            .build())
-                );
-                answer = response.getResult().getOutput().getContent();
+                // 使用ChatClient的正确fluent API
+                answer = chatClient.prompt()
+                        .user(prompt)
+                        .call()
+                        .content();
             }
             
             // 5. 提取引用信息

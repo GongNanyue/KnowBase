@@ -358,11 +358,13 @@ public class RetrievalService {
 @Slf4j
 public class ChatService {
     
-    @Autowired
-    private RetrievalService retrievalService;
+    private final RetrievalService retrievalService;
+    private final ChatClient chatClient;
     
-    @Autowired
-    private ChatClient chatClient;
+    public ChatService(RetrievalService retrievalService, ChatClient.Builder chatClientBuilder) {
+        this.retrievalService = retrievalService;
+        this.chatClient = chatClientBuilder.build();
+    }
     
     public ChatResponse chat(ChatRequest request) {
         try {
@@ -376,8 +378,11 @@ public class ChatService {
             // 3. 构建Prompt
             String prompt = buildPrompt(request.getMessage(), context);
             
-            // 4. LLM生成回答
-            String answer = chatClient.call(prompt);
+            // 4. LLM生成回答 - 使用正确的ChatClient fluent API
+            String answer = chatClient.prompt()
+                    .user(prompt)
+                    .call()
+                    .content();
             
             // 5. 构建响应
             return ChatResponse.builder()

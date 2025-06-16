@@ -593,7 +593,15 @@ public class ChatGenerationService {
     private final PromptBuilderService promptBuilder;
     private final TokenCountingService tokenCounter;
     
-    public ChatResponse generateResponse(String question, 
+    public ChatGenerationService(PromptBuilderService promptBuilder,
+                               TokenCountingService tokenCounter,
+                               ChatClient.Builder chatClientBuilder) {
+        this.promptBuilder = promptBuilder;
+        this.tokenCounter = tokenCounter;
+        this.chatClient = chatClientBuilder.build();
+    }
+    
+    public ChatResponse generateResponse(String question,
                                        List<RetrievalResult> retrievalResults,
                                        List<ChatMessage> history) {
         try {
@@ -607,19 +615,19 @@ public class ChatGenerationService {
                 prompt = truncatePrompt(prompt, MAX_TOKENS);
             }
             
-            // 3. 调用LLM
-            ChatResponse response = chatClient.call(
-                ChatRequest.builder()
-                    .messages(List.of(new Message(MessageType.USER, prompt)))
+            // 3. 调用LLM - 使用正确的ChatClient fluent API
+            String answer = chatClient.prompt()
+                    .user(prompt)
                     .options(ChatOptions.builder()
                         .model("gpt-4o-mini")
                         .temperature(0.7f)
                         .maxTokens(1000)
                         .build())
-                    .build());
+                    .call()
+                    .content();
             
             // 4. 处理响应
-            return buildChatResponse(response, retrievalResults);
+            return buildChatResponse(answer, retrievalResults);
             
         } catch (Exception e) {
             log.error("LLM调用失败", e);
@@ -627,13 +635,12 @@ public class ChatGenerationService {
         }
     }
     
-    private ChatResponse buildChatResponse(ChatResponse llmResponse, 
+    private ChatResponse buildChatResponse(String answer,
                                          List<RetrievalResult> retrievalResults) {
         return ChatResponse.builder()
-            .answer(llmResponse.getResult().getOutput().getContent())
+            .answer(answer)
             .references(buildReferences(retrievalResults))
             .timestamp(LocalDateTime.now())
-            .tokenUsage(llmResponse.getMetadata().getUsage())
             .build();
     }
     

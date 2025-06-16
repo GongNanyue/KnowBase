@@ -25,7 +25,7 @@ flowchart TB
 
 ### 1. 启动Milvus (Docker)
 ```yaml
-# docker-compose-milvus.yml
+# docker-compose.yml-milvus.yml
 version: '3.8'
 services:
   etcd:
@@ -48,7 +48,7 @@ services:
       - "9000:9000"
 
   milvus:
-    image: milvusdb/milvus:v2.3.3
+    image: milvusdb/milvus:v2.5.1
     command: ["milvus", "run", "standalone"]
     environment:
       ETCD_ENDPOINTS: etcd:2379
@@ -59,42 +59,110 @@ services:
       - "etcd"
       - "minio"
 
-# 启动命令
-docker-compose -f docker-compose-milvus.yml up -d
+
 ```
 
 ### 2. 后端依赖配置
 
 ```xml
 <!-- Backend/pom.xml -->
-<dependencies>
-    <!-- Spring Boot Web -->
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     
-    <!-- Spring AI OpenAI -->
-    <dependency>
-        <groupId>org.springframework.ai</groupId>
-        <artifactId>spring-ai-openai-spring-boot-starter</artifactId>
-        <version>1.0.0-M4</version>
-    </dependency>
-    
-    <!-- Spring AI Milvus Vector Store -->
-    <dependency>
-        <groupId>org.springframework.ai</groupId>
-        <artifactId>spring-ai-milvus-store-spring-boot-starter</artifactId>
-        <version>1.0.0-M4</version>
-    </dependency>
-    
-    <!-- 文档处理 -->
-    <dependency>
-        <groupId>org.springframework.ai</groupId>
-        <artifactId>spring-ai-tika-document-reader</artifactId>
-        <version>1.0.0-M4</version>
-    </dependency>
-</dependencies>
+    <groupId>org.example</groupId>
+    <artifactId>knowbase-backend</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <spring.boot.version>3.2.0</spring.boot.version>
+        <spring.ai.version>1.0.0-SNAPSHOT</spring.ai.version>
+    </properties>
+
+    <!-- 添加Spring AI BOM -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-bom</artifactId>
+                <version>${spring.ai.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring.boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- 添加Spring快照仓库 -->
+    <repositories>
+        <repository>
+            <id>spring-snapshots</id>
+            <name>Spring Snapshots</name>
+            <url>https://repo.spring.io/snapshot</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+        <repository>
+            <id>central-portal-snapshots</id>
+            <name>Central Portal Snapshots</name>
+            <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <!-- Spring Boot Web -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        
+        <!-- Spring AI OpenAI Starter -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-model-openai</artifactId>
+        </dependency>
+        
+        <!-- Spring AI Milvus Vector Store Starter -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-vector-store-milvus</artifactId>
+        </dependency>
+        
+        <!-- 文档处理 -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-tika-document-reader</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring.boot.version}</version>
+            </plugin>
+        </plugins>
+    </build>
+</project>
 ```
 
 ### 3. 配置文件
@@ -358,7 +426,7 @@ public class AIConfig {
 
 ### 1. 启动Milvus
 ```bash
-docker-compose -f docker-compose-milvus.yml up -d
+docker-compose.yml -f docker-compose.yml-milvus.yml up -d
 ```
 
 ### 2. 设置环境变量
@@ -439,5 +507,28 @@ spring:
 - **真正的RAG** - 完整的检索增强生成
 - **生产级别** - 可扩展的架构设计
 - **用户友好** - 直观的界面操作
+
+## 🔧 Context7 MCP 集成应用
+
+### 📚 实时技术文档获取
+使用Context7 MCP工具为知识库添加最新技术文档：
+
+```java
+// 可以集成Context7 MCP获取实时技术文档
+@Service
+public class Context7Service {
+    
+    public void updateTechDocs() {
+        // 获取Spring AI最新文档
+        // 获取Milvus最新配置
+        // 自动更新知识库内容
+    }
+}
+```
+
+### 🎯 技术栈文档覆盖
+- **Spring AI** - 获取最新API和配置示例
+- **Milvus** - 获取最新版本配置和最佳实践
+- **OpenAI** - 获取最新模型参数和使用指南
 
 这个版本使用Spring AI框架，代码更加简洁优雅，同时保持了完整的RAG功能，非常适合期末作业展示！

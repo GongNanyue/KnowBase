@@ -366,7 +366,7 @@ http {
 ### 1. 完整服务编排
 
 ```yaml
-# docker-compose.yml
+# docker-compose.yml.yml
 version: '3.8'
 
 services:
@@ -527,7 +527,7 @@ networks:
 ### 2. 开发环境配置
 
 ```yaml
-# docker-compose.dev.yml
+# docker-compose.yml.dev.yml
 version: '3.8'
 
 services:
@@ -553,7 +553,7 @@ services:
 ### 3. 生产环境配置
 
 ```yaml
-# docker-compose.prod.yml
+# docker-compose.yml.prod.yml
 version: '3.8'
 
 services:
@@ -621,53 +621,53 @@ cp .env.example .env
 vim .env
 
 # 启动所有服务
-docker-compose up -d
+docker-compose.yml up -d
 
 # 查看启动日志
-docker-compose logs -f
+docker-compose.yml logs -f
 
 # 检查服务状态
-docker-compose ps
+docker-compose.yml ps
 ```
 
 ### 2. 分步启动
 
 ```bash
 # 1. 启动基础服务
-docker-compose up -d postgres redis etcd minio
+docker-compose.yml up -d postgres redis etcd minio
 
 # 2. 等待基础服务就绪
 sleep 30
 
 # 3. 启动Milvus
-docker-compose up -d milvus
+docker-compose.yml up -d milvus
 
 # 4. 等待Milvus就绪
 sleep 60
 
 # 5. 启动应用服务
-docker-compose up -d backend frontend
+docker-compose.yml up -d backend frontend
 
 # 6. 启动管理界面
-docker-compose up -d attu
+docker-compose.yml up -d attu
 ```
 
 ### 3. 健康检查
 
 ```bash
 # 检查所有服务状态
-docker-compose ps
+docker-compose.yml ps
 
 # 检查特定服务日志
-docker-compose logs backend
-docker-compose logs milvus
+docker-compose.yml logs backend
+docker-compose.yml logs milvus
 
 # 检查服务健康状态
 curl http://localhost:8080/actuator/health
 curl http://localhost:3000/health
 
 # 检查Milvus连接
-docker-compose exec milvus milvus_cli
+docker-compose.yml exec milvus milvus_cli
 ```
 
 ## 🔧 运维管理
@@ -676,26 +676,26 @@ docker-compose exec milvus milvus_cli
 
 ```bash
 # 启动服务
-docker-compose up -d [service_name]
+docker-compose.yml up -d [service_name]
 
 # 停止服务
-docker-compose stop [service_name]
+docker-compose.yml stop [service_name]
 
 # 重启服务
-docker-compose restart [service_name]
+docker-compose.yml restart [service_name]
 
 # 查看日志
-docker-compose logs -f [service_name]
+docker-compose.yml logs -f [service_name]
 
 # 进入容器
-docker-compose exec [service_name] bash
+docker-compose.yml exec [service_name] bash
 
 # 扩缩容
-docker-compose up -d --scale backend=3
+docker-compose.yml up -d --scale backend=3
 
 # 更新服务
-docker-compose pull
-docker-compose up -d --force-recreate
+docker-compose.yml pull
+docker-compose.yml up -d --force-recreate
 ```
 
 ### 2. 数据备份
@@ -708,13 +708,13 @@ BACKUP_DIR="/backup/$(date +%Y%m%d_%H%M%S)"
 mkdir -p $BACKUP_DIR
 
 # 备份PostgreSQL
-docker-compose exec -T postgres pg_dump -U postgres knowbase > $BACKUP_DIR/postgres.sql
+docker-compose.yml exec -T postgres pg_dump -U postgres knowbase > $BACKUP_DIR/postgres.sql
 
 # 备份Redis
-docker-compose exec -T redis redis-cli --rdb - > $BACKUP_DIR/redis.rdb
+docker-compose.yml exec -T redis redis-cli --rdb - > $BACKUP_DIR/redis.rdb
 
 # 备份Milvus
-docker-compose exec -T milvus milvus-backup create --collection-names documents --backup-name daily_backup
+docker-compose.yml exec -T milvus milvus-backup create --collection-names documents --backup-name daily_backup
 
 # 备份上传文件
 tar -czf $BACKUP_DIR/uploads.tar.gz ./data/uploads
@@ -731,13 +731,13 @@ echo "备份完成: $BACKUP_DIR"
 # 检查容器状态
 check_container_health() {
     local container=$1
-    local status=$(docker-compose ps -q $container | xargs docker inspect --format='{{.State.Health.Status}}' 2>/dev/null)
+    local status=$(docker-compose.yml ps -q $container | xargs docker inspect --format='{{.State.Health.Status}}' 2>/dev/null)
     
     if [ "$status" = "healthy" ]; then
         echo "✅ $container is healthy"
     else
         echo "❌ $container is unhealthy: $status"
-        docker-compose logs --tail=20 $container
+        docker-compose.yml logs --tail=20 $container
     fi
 }
 
@@ -755,39 +755,39 @@ done
 #### Milvus启动失败
 ```bash
 # 检查依赖服务
-docker-compose ps etcd minio
+docker-compose.yml ps etcd minio
 
 # 查看Milvus日志
-docker-compose logs milvus
+docker-compose.yml logs milvus
 
 # 重置Milvus数据
-docker-compose down
+docker-compose.yml down
 docker volume rm knowbase_milvus_data
-docker-compose up -d
+docker-compose.yml up -d
 ```
 
 #### 后端连接数据库失败
 ```bash
 # 检查PostgreSQL状态
-docker-compose exec postgres pg_isready
+docker-compose.yml exec postgres pg_isready
 
 # 检查网络连接
-docker-compose exec backend ping postgres
+docker-compose.yml exec backend ping postgres
 
 # 查看后端启动日志
-docker-compose logs backend
+docker-compose.yml logs backend
 ```
 
 #### 前端无法访问API
 ```bash
 # 检查Nginx配置
-docker-compose exec frontend nginx -t
+docker-compose.yml exec frontend nginx -t
 
 # 检查代理配置
 curl -I http://localhost:3000/api/health
 
 # 重新加载Nginx配置
-docker-compose exec frontend nginx -s reload
+docker-compose.yml exec frontend nginx -s reload
 ```
 
 ### 2. 性能调优

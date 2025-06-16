@@ -109,7 +109,7 @@ $ cd knowbase
 
 ```bash
 $ cd docker
-$ docker compose -f docker-compose-milvus.yml up -d
+$ docker compose -f docker-compose.yml-milvus.yml up -d
 ```
 > 这将启动 Milvus、MinIO、etcd 及其依赖容器。
 

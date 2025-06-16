@@ -1,0 +1,36 @@
+spring:
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY:sk-Ej44eCRZESr4WPbF26Ab00Ea7c50461aB496B972C49f0fE6}
+      chat:
+        options:
+          model: gpt-3.5-turbo
+          temperature: 0.7
+      embedding:
+        options:
+          model: text-embedding-3-small
+      base-url: ${OPENAI_API_BASE_URL:https://api.bltapi.top/v1}
+    
+    vectorstore:
+      milvus:
+        client:
+          host: localhost
+          port: 19530
+        database-name: default
+        collection-name: document_chunks
+        embedding-dimension: 1536
+        index-type: IVF_FLAT
+        metric-type: COSINE
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org.springframework.ai: DEBUG
+    org.example.backend: DEBUG

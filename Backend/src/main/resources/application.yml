@@ -18,7 +18,7 @@ spring:
           port: 19530
         database-name: default
         collection-name: document_chunks
-        embedding-dimension: 1536
+        embedding-dimension: 1024
         index-type: IVF_FLAT
         metric-type: COSINE
         initialize-schema: true

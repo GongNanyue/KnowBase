@@ -57,7 +57,7 @@ public class ChatService {
             List<String> references = similarDocuments.stream()
                     .map(doc -> {
                         String source = (String) doc.getMetadata().get("source");
-                        Integer chunkIndex = (Integer) doc.getMetadata().get("chunk_index");
+                        Integer chunkIndex = ((Double) doc.getMetadata().get("chunk_index")).intValue();
                         return String.format("%s (片段 %d)", source, chunkIndex + 1);
                     })
                     .collect(Collectors.toList());
@@ -76,14 +76,14 @@ public class ChatService {
         }
 
         return String.format("""
-            请基于以下上下文信息回答用户的问题。如果上下文中没有相关信息，请说明无法找到相关信息。
-            
-            上下文信息：
-            %s
-            
-            用户问题：%s
-            
-            请给出准确、有帮助的回答：
-            """, context, question);
+                请基于以下上下文信息回答用户的问题。如果上下文中没有相关信息，请说明无法找到相关信息。
+                
+                上下文信息：
+                %s
+                
+                用户问题：%s
+                
+                请给出准确、有帮助的回答：
+                """, context, question);
     }
 }

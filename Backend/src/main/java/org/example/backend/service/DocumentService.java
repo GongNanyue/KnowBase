@@ -37,7 +37,7 @@ public class DocumentService {
             List<Document> documents = documentReader.get();
 
             // 3. 文档分块
-            TokenTextSplitter textSplitter = new TokenTextSplitter(500, 100, 5, 10000, true);
+            TokenTextSplitter textSplitter = new TokenTextSplitter(5000, 100, 5, 10000, true);
             List<Document> chunks = textSplitter.apply(documents);
 
             // 4. 添加元数据

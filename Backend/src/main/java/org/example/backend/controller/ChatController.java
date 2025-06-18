@@ -37,4 +37,6 @@ public class ChatController {
     public Map<String, String> health() {
         return Map.of("status", "OK", "service", "KnowBase RAG System");
     }
+
+    
 }

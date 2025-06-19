@@ -76,8 +76,8 @@ const checkSystemHealth = async () => {
     const startTime = Date.now()
     const response = await api.checkHealth()
     const endTime = Date.now()
-    
-    systemStatus.isHealthy = response.status === 'UP'
+    console.log(response)
+    systemStatus.isHealthy = response.status === 'OK'
     systemStatus.responseTime = endTime - startTime
     systemStatus.lastChecked = new Date().toISOString()
   } catch (error) {

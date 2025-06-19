@@ -37,7 +37,7 @@ export class KnowBaseAPI {
   /**
    * 检查服务健康状态
    */
-  static async checkHealth() {
+   async checkHealth() {
     try {
       const response = await api.get('/health')
       return response.data
@@ -50,7 +50,7 @@ export class KnowBaseAPI {
    * 发送消息给AI
    * @param {string} message - 用户消息
    */
-  static async sendMessage(message) {
+  async sendMessage(message) {
     try {
       if (!message || message.trim().length === 0) {
         throw new Error('消息内容不能为空')
@@ -79,7 +79,7 @@ export class KnowBaseAPI {
    * @param {File} file - 文件对象
    * @param {Function} onProgress - 进度回调函数
    */
-  static async uploadDocument(file, onProgress = null) {
+   async uploadDocument(file, onProgress = null) {
     try {
       if (!file) {
         throw new Error('请选择要上传的文件')

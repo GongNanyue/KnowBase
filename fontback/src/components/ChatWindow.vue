@@ -175,8 +175,10 @@ const messagesContainer = ref(null)
 // 检查服务连接状态
 const checkConnection = async () => {
   try {
-    await KnowBaseAPI.checkHealth()
-    isConnected.value = true
+  const response = await new KnowBaseAPI().checkHealth()
+    isConnected.value = response.status == "OK"
+
+
   } catch (error) {
     isConnected.value = false
     console.error('服务连接失败:', error)
@@ -204,7 +206,7 @@ const sendMessage = async () => {
   scrollToBottom()
 
   try {
-    const response = await KnowBaseAPI.sendMessage(messageContent)
+    const response = await new  KnowBaseAPI().sendMessage(messageContent)
     
     const aiMessage = {
       id: Date.now() + 1,
@@ -294,15 +296,15 @@ onMounted(() => {
 
 // 向外暴露方法
 defineExpose({
-  addSystemMessage: (content) => {
-    messages.push({
-      id: Date.now(),
-      content,
-      isUser: false,
-      timestamp: Date.now(),
-      references: []
-    })
-  }
+  // addSystemMessage: (content) => {
+  //   messages.push({
+  //     id: Date.now(),
+  //     content,
+  //     isUser: false,
+  //     timestamp: Date.now(),
+  //     references: []
+  //   })
+  // }
 })
 </script>
 

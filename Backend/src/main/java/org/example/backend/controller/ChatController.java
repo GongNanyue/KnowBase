@@ -33,7 +33,7 @@ public class ChatController {
         return Map.of("message", result);
     }
     
-    @GetMapping("/health")
+        @GetMapping("/health")
     public Map<String, String> health() {
         return Map.of("status", "OK", "service", "KnowBase RAG System");
     }

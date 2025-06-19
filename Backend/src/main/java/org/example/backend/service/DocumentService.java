@@ -12,7 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-// Backend/src/main/java/org/example/backend/service/DocumentService.java
 @Service
 public class DocumentService {
 

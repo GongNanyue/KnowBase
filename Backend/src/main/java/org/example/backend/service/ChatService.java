@@ -35,7 +35,7 @@ public class ChatService {
 
             // 2. 构建上下文
             String context = similarDocuments.stream()
-                    .map(Document::getText)  // 使用getText()而不是getContent()
+                    .map(Document::getText) 
                     .collect(Collectors.joining("\n\n"));
 
             // 3. 构建提示词

@@ -41,12 +41,12 @@ public class ChatService {
             // 3. 构建提示词
             String prompt = buildPrompt(userMessage, context);
 
-            // 4. 使用Spring AI ChatClient生成回答 - 正确的API
+            // 4. 使用Spring AI ChatClient生成回答
             String answer;
             if (context.trim().isEmpty()) {
                 answer = "抱歉，我没有找到相关的文档信息来回答您的问题。请先上传相关文档。";
             } else {
-                // 使用ChatClient的正确fluent API
+
                 answer = chatClient.prompt()
                         .user(prompt)
                         .call()

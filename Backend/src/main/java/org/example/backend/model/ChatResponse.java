@@ -13,7 +13,7 @@ public class ChatResponse {
         this.timestamp = System.currentTimeMillis();
     }
 
-    // getters and setters
+
     public String getAnswer() { return answer; }
     public void setAnswer(String answer) { this.answer = answer; }
     public List<String> getReferences() { return references; }

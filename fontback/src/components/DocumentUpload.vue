@@ -278,7 +278,7 @@ const uploadFile = async () => {
   successMessage.value = ''
 
   try {
-    const response = await KnowBaseAPI.uploadDocument(
+    const response = await new KnowBaseAPI().uploadDocument(
       selectedFile.value,
       (progress) => {
         uploadProgress.value = progress

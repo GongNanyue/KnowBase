@@ -57,13 +57,13 @@ const hideNotification = () => {
 const handleUploadSuccess = (data) => {
   showNotification('success', '上传成功', `文档已成功上传并处理`)
   
-  // 刷新聊天窗口（如果需要）
-  if (chatWindow.value) {
-    chatWindow.value.refreshKnowledgeBase()
-  }
-  if (mobileChatWindow.value) {
-    mobileChatWindow.value.refreshKnowledgeBase()
-  }
+  // // 刷新聊天窗口（如果需要）
+  // if (chatWindow.value) {
+  //   chatWindow.value.refreshKnowledgeBase()
+  // }
+  // if (mobileChatWindow.value) {
+  //   mobileChatWindow.value.refreshKnowledgeBase()
+  // }
 }
 
 const handleUploadError = (error) => {
